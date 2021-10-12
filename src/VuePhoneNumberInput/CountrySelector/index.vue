@@ -70,12 +70,12 @@
     </label>
     <Transition name="slide">
       <div
-        v-show="hasListOpen">
+        v-show="hasListOpen"
+        ref="countriesList">
         <div class="country-selector__search">
           <input v-model="searchInput">
         </div>
         <div
-          ref="countriesList"
           class="country-selector__list"
           :class="{ 'has-calling-code': showCodeOnList }"
           :style="[radiusStyle, listHeight, inputBgColor]">
