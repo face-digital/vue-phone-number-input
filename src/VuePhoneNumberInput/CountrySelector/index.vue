@@ -239,7 +239,7 @@
       scrollToSelectedOnFocus (arrayIndex) {
         this.$nextTick(() => {
           // this.indexItemToShow = arrayIndex - 3
-          this.$refs.countriesList.scrollTop = (arrayIndex * (this.countriesHeight + 1) - ((this.countriesHeight + 1) * 3)) - 100
+          this.$refs.countriesList.scrollTop = arrayIndex * (this.countriesHeight + 1) - ((this.countriesHeight + 1) * 3)
         })
       },
       keyboardNav (e) {
@@ -370,6 +370,7 @@
       min-width: 230px;
       background-color: $bg-color;
       width: 100%;
+      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 
       input {
         width: 100%;
@@ -407,7 +408,7 @@
       overflow-x: hidden;
       padding: 0;
       margin: 0;
-      padding-top: 45px;
+      margin-top: 45px;
 
       &.has-calling-code {
         min-width: 270px;
