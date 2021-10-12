@@ -70,48 +70,50 @@
     </label>
     <Transition name="slide">
       <div
-        v-show="hasListOpen"
-        ref="countriesList"
-        class="country-selector__list"
-        :class="{ 'has-calling-code': showCodeOnList }"
-        :style="[radiusStyle, listHeight, inputBgColor]"
-      >
-        <RecycleScroller
-          v-slot="{ item }"
-          :items="countriesSorted"
-          :item-size="1"
-          key-field="iso2"
-        >
-          <button
-            :key="`item-${item.code}`"
-            :class="[
-              { 'selected': value === item.iso2 },
-              { 'keyboard-selected': value !== item.iso2 && tmpValue === item.iso2 }
-            ]"
-            class="flex align-center country-selector__list__item"
-            :style="[
-              itemHeight,
-              value === item.iso2 ? bgItemSelectedStyle : null
-            ]"
-            tabindex="-1"
-            type="button"
-            @click.stop="updateValue(item.iso2)"
+        v-show="hasListOpen">
+        <div class="country-selector__search">
+          <input v-model="searchInput">
+        </div>
+        <div
+          ref="countriesList"
+          class="country-selector__list"
+          :class="{ 'has-calling-code': showCodeOnList }"
+          :style="[radiusStyle, listHeight, inputBgColor]">
+          <div
+            v-for="item in countriesSorted"
+            :key="item.id"
           >
-            <div
-              v-if="!noFlags"
-              class="country-selector__list__item__flag-container"
+            <button
+              :key="`item-${item.code}`"
+              :class="[
+                { 'selected': value === item.iso2 },
+                { 'keyboard-selected': value !== item.iso2 && tmpValue === item.iso2 }
+              ]"
+              class="flex align-center country-selector__list__item"
+              :style="[
+                itemHeight,
+                value === item.iso2 ? bgItemSelectedStyle : null
+              ]"
+              tabindex="-1"
+              type="button"
+              @click.stop="updateValue(item.iso2)"
             >
-              <div :class="`iti-flag-small iti-flag ${item.iso2.toLowerCase()}`" />
-            </div>
-            <span
-              v-if="showCodeOnList"
-              class="country-selector__list__item__calling-code flex-fixed"
-            >+{{ item.dialCode }}</span>
-            <div class="dots-text">
-              {{ item.name }}
-            </div>
-          </button>
-        </RecycleScroller>
+              <div
+                v-if="!noFlags"
+                class="country-selector__list__item__flag-container"
+              >
+                <div :class="`iti-flag-small iti-flag ${item.iso2.toLowerCase()}`" />
+              </div>
+              <span
+                v-if="showCodeOnList"
+                class="country-selector__list__item__calling-code flex-fixed"
+              >+{{ item.dialCode }}</span>
+              <div class="dots-text">
+                {{ item.name }}
+              </div>
+            </button>
+          </div>
+        </div>
       </div>
     </Transition>
   </div>
@@ -121,12 +123,12 @@
   import { getCountryCallingCode } from 'libphonenumber-js'
   import StylesHandler from '@/VuePhoneNumberInput/mixins/StylesHandler'
 
-  import { RecycleScroller } from 'vue-virtual-scroller'
+  // import { RecycleScroller } from 'vue-virtual-scroller'
 
   export default {
     name: 'CountrySelector',
     components: {
-      RecycleScroller
+      // RecycleScroller
     },
     mixins: [StylesHandler],
     props: {
@@ -155,7 +157,8 @@
         tmpValue: this.value,
         query: '',
         indexItemToShow: 0,
-        isHover: false
+        isHover: false,
+        searchInput: ''
       }
     },
     computed: {
@@ -181,12 +184,13 @@
         return this.countriesList.filter(item => !this.preferredCountries.includes(item.iso2))
       },
       countriesSorted () {
-        return this.preferredCountries
+        const countries = (this.preferredCountries
           ? [ ...this.countriesFiltered,
               ...this.otherCountries ]
           : this.onlyCountries
             ? this.countriesFiltered
-            : this.countriesList
+            : this.countriesList).filter(c => c.name.toLowerCase().includes(this.searchInput.toLowerCase()))
+        return countries
       },
       selectedValueIndex () {
         return this.value
@@ -219,6 +223,7 @@
           this.isFocus = true
           this.hasListOpen = true
           if (this.value) this.scrollToSelectedOnFocus(this.selectedValueIndex)
+          this.searchInput = ''
         }
       },
       closeList () {
@@ -234,7 +239,7 @@
       scrollToSelectedOnFocus (arrayIndex) {
         this.$nextTick(() => {
           // this.indexItemToShow = arrayIndex - 3
-          this.$refs.countriesList.scrollTop = arrayIndex * (this.countriesHeight + 1) - ((this.countriesHeight + 1) * 3)
+          this.$refs.countriesList.scrollTop = (arrayIndex * (this.countriesHeight + 1) - ((this.countriesHeight + 1) * 3)) - 100
         })
       },
       keyboardNav (e) {
@@ -358,6 +363,22 @@
       }
     }
 
+    &__search {
+      padding: 10px;
+      position: absolute;
+      z-index: 10;
+      min-width: 230px;
+      background-color: $bg-color;
+      width: 100%;
+
+      input {
+        width: 100%;
+        outline: none;
+        padding-left: 4px;
+        border: 1px solid $third-color;
+      }
+    }
+
     &__country-flag {
       margin: auto 0;
       position: absolute;
@@ -386,6 +407,7 @@
       overflow-x: hidden;
       padding: 0;
       margin: 0;
+      padding-top: 45px;
 
       &.has-calling-code {
         min-width: 270px;
@@ -489,6 +511,14 @@
       .country-selector__input,
       .country-selector__list {
         color: $secondary-color-dark;
+      }
+
+      .country-selector__search {
+        background-color: $bg-color-dark-l;
+      }
+
+      .country-selector__search input {
+        background-color: $secondary-color-dark;
       }
     }
 
