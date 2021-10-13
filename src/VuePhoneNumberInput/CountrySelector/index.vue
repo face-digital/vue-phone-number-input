@@ -406,7 +406,7 @@
       overflow-x: hidden;
       padding: 0;
       margin: 0;
-      margin-top: 48px;
+      margin-top: 46px;
 
       &.has-calling-code {
         min-width: 270px;
