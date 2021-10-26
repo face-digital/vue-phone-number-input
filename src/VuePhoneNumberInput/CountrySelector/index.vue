@@ -32,7 +32,7 @@
       :disabled="disabled"
       class="country-selector__input"
       readonly
-      :style="[radiusLeftStyle, inputBorderStyle, inputBoxShadowStyle, inputBgColor]"
+      :style="[radiusLeftStyle, inputBorderStyle, inputBoxShadowStyle, inputBgColor, {height: height}]"
       @focus="isFocus = true"
       @keydown="keyboardNav"
       @click.stop="toggleList"
@@ -145,7 +145,8 @@
       ignoredCountries: { type: Array, default: null },
       noFlags: { type: Boolean, default: false },
       countriesHeight: { type: Number, default: 35 },
-      showCodeOnList: { type: Boolean, default: false }
+      showCodeOnList: { type: Boolean, default: false },
+      height: { type: String, default: '44px' }
     },
     data () {
       return {
