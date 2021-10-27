@@ -187,7 +187,7 @@
               ...this.otherCountries ]
           : this.onlyCountries
             ? this.countriesFiltered
-            : this.countriesList).filter(c => c && c.name.toLowerCase().includes(this.searchInput.toLowerCase()))
+            : this.countriesList).filter(c => c && c.name && c.name.toLowerCase().includes(this.searchInput.toLowerCase()))
         return countries
       },
       selectedValueIndex () {
